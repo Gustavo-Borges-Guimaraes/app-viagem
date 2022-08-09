@@ -19,7 +19,7 @@ public class MotoristaController {
         return motoristaService.criarMotorista(motorista);
     }
 
-    @GetMapping("{/motorista_id}")
+    @GetMapping("/{motorista_id}")
     public Motorista verMotorista(@PathVariable("motorista_id") Long motorista_id) {
         return motoristaService.verMotorista(motorista_id);
     }
@@ -39,7 +39,7 @@ public class MotoristaController {
         return motoristaService.substituirMotorista(motorista);
     }
 
-    @DeleteMapping("{/motorista_id}")
+    @DeleteMapping("/{motorista_id}")
     public String excluirMotorista(@PathVariable("motorista_id") Long motorista_id) {
         return motoristaService.excluirMotorista(motorista_id);
     }

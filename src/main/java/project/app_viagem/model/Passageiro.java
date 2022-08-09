@@ -17,7 +17,7 @@ public class Passageiro {
     private Pessoa pessoa;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "viagem)id")
+    @JoinColumn(name = "viagem_id")
     private Viagem viagem;
 
 }
