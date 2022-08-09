@@ -29,14 +29,14 @@ public class MotoristaController {
         return motoristaService.listarMotoristas();
     }
 
-    @PatchMapping
-    public Motorista atualizarMotorista(@RequestBody Motorista motorista) {
-        return motoristaService.atualizarMotorista(motorista);
+    @PatchMapping("/{motorista_id}")
+    public Motorista atualizarMotorista(@RequestBody Motorista motorista_att, @PathVariable("motorista_id") Long motorista_id) {
+        return motoristaService.atualizarMotorista(motorista_att, motorista_id);
     }
 
-    @PutMapping
-    public Motorista substituirMotorista(@RequestBody Motorista motorista) {
-        return motoristaService.substituirMotorista(motorista);
+    @PutMapping("/{motorista_id}")
+    public Motorista substituirMotorista(@RequestBody Motorista motorista_att, @PathVariable("motorista_id") Long motorista_id) {
+        return motoristaService.substituirMotorista(motorista_att, motorista_id);
     }
 
     @DeleteMapping("/{motorista_id}")

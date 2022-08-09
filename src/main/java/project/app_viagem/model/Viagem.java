@@ -3,7 +3,6 @@ package project.app_viagem.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,15 +14,17 @@ public class Viagem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String distancia;
+
     private String localInicio;
 
     private String localFim;
 
-    private LocalDate dataInicio;
+    private String dataInicio;
 
-    private LocalDate dataFim;
+    private String dataFim;
 
     @OneToMany
-    @JoinColumn(name = "id_passageiros")
+    @JoinColumn(name = "passageiros_id")
     private List<Passageiro> passageiros = new ArrayList<>();
 }
