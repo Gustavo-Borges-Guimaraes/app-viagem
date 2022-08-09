@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Passageiro;
 import project.app_viagem.model.Pessoa;
-import project.app_viagem.model.Viagem;
 import project.app_viagem.repository.PassageiroRepository;
 
 import java.util.List;
