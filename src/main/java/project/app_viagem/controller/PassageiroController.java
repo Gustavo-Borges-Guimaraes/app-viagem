@@ -3,6 +3,7 @@ package project.app_viagem.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import project.app_viagem.model.Passageiro;
+import project.app_viagem.model.Viagem;
 import project.app_viagem.service.PassageiroService;
 
 import java.util.List;
@@ -48,5 +49,20 @@ public class PassageiroController {
     public String deletarPassageiros() {
         return passageiroService.deletarPassageiros();
     }
+
+//    @PostMapping("adicionarViagem/{passageiro_id}/{viagem_id}")
+//    public List<Viagem> cadastrarViagem(@PathVariable("passageiro_id") Long passageiro_id, @PathVariable("viagem_id") Long viagem_id) {
+//        return passageiroService.cadastrarViagem(passageiro_id, viagem_id);
+//    }
+//
+//    @GetMapping("verViagem/{passageiro_id}/{viagem_id}")
+//    public Viagem verViagem(@PathVariable("passageiro_id") Long passageiro_id, @PathVariable("viagem_id") Long viagem_id) {
+//        return passageiroService.verViagem(passageiro_id, viagem_id);
+//    }
+//
+//    @DeleteMapping("removerViagem/{passageiro_id}/{viagem_id}")
+//    public String removerViagem(@PathVariable("passageiro_id") Long passageiro_id, @PathVariable("viagem_id") Long viagem_id) {
+//        return passageiroService.removerViagem(passageiro_id, viagem_id);
+//    }
 
 }

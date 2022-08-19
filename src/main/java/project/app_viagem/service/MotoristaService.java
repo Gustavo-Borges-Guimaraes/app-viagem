@@ -1,88 +1,80 @@
 package project.app_viagem.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Motorista;
-import project.app_viagem.model.Pessoa;
 import project.app_viagem.repository.MotoristaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class MotoristaService {
 
     private MotoristaRepository motoristaRepository;
+    private PessoaService pessoaService;
 
     public Motorista criarMotorista(Motorista motorista) {
         return motoristaRepository.save(motorista);
     }
 
-    public Motorista verMotorista(Long motorista_id) {
-        return motoristaRepository.findById(motorista_id).get();
+    public ResponseEntity<Motorista> verMotorista(Long motorista_id) {
+        return motoristaRepository.findById(motorista_id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    public List<Motorista> listarMotoristas() {
-        return motoristaRepository.findAll();
+    public ResponseEntity<List<Motorista>> listarMotoristas() {
+        if (!motoristaRepository.findAll().isEmpty())
+            return ResponseEntity.ok(motoristaRepository.findAll());
+
+        return ResponseEntity.notFound().build();
     }
 
-    public Motorista atualizarMotorista(Motorista motorista_att, Long motorista_id) {
-        Optional<Motorista> optionalMotorista = motoristaRepository.findById(motorista_id);
+    public ResponseEntity<Motorista> atualizarMotorista(Motorista motorista_att, Long motorista_id) {
 
-        if (optionalMotorista.isPresent()) {
-            Motorista motorista = optionalMotorista.get();
+        if (motoristaRepository.existsById(motorista_id)) {
+            Motorista motorista = motoristaRepository.findById(motorista_id).get();
 
             if (!motorista_att.getCredenciais().isEmpty())
                 motorista.setCredenciais(motorista_att.getCredenciais());
 
-            Pessoa pessoa = motorista.getPessoa();
-            Pessoa pessoa_att = motorista_att.getPessoa();
+            motorista.setPessoa(pessoaService.atualizaPessoa(motorista.getPessoa(), motorista_att.getPessoa()));
+            motoristaRepository.save(motorista);
 
-            if (!pessoa_att.getNome().isEmpty())
-                pessoa.setNome(pessoa_att.getNome());
-
-            if (!pessoa_att.getCpf().isEmpty())
-                pessoa.setCpf(pessoa_att.getCpf());
-
-            if (!pessoa_att.getNumero().isEmpty())
-                pessoa.setNumero(pessoa_att.getNumero());
-
-            if (!pessoa_att.getEmail().isEmpty())
-                pessoa.setEmail(pessoa_att.getEmail());
-
-            motorista.setPessoa(pessoa);
-
-            return motoristaRepository.save(motorista);
+            return ResponseEntity.ok(motorista);
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 
-    public Motorista substituirMotorista(Motorista motorista_att, Long motorista_id) {
-        Optional<Motorista> optionalMotorista = motoristaRepository.findById(motorista_id);
+    public ResponseEntity<Motorista> substituirMotorista(Motorista motorista_att, Long motorista_id) {
 
-        if (optionalMotorista.isPresent()) {
-            Motorista motorista = optionalMotorista.get();
-
-            motorista_att.getPessoa().setId(motorista.getPessoa().getId());
+        if (motoristaRepository.existsById(motorista_id)) {
             motorista_att.setId(motorista_id);
+            motoristaRepository.save(motorista_att);
 
-            return motoristaRepository.save(motorista_att);
+            return ResponseEntity.ok(motorista_att);
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 
-    public String excluirMotorista(Long motorista_id) {
-        motoristaRepository.deleteById(motorista_id);
+    public ResponseEntity<Void> excluirMotorista(Long motorista_id) {
+        if (motoristaRepository.existsById(motorista_id)) {
+            motoristaRepository.deleteById(motorista_id);
 
-        return "Motorista de ID: " + motorista_id + " excluido com sucesso!";
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    public String deletarMotoristas() {
+    public ResponseEntity<Void> deletarMotoristas() {
+        if (!motoristaRepository.findAll().isEmpty()) {
+            motoristaRepository.deleteAll();
 
-        motoristaRepository.deleteAll();
-
-        return "Todos motoristas deletados com sucesso!";
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

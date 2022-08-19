@@ -78,4 +78,8 @@ public class ViagemService {
 
         return "Todos viagems deletados com sucesso!";
     }
+
+    public void cadastrarPassageiro() {
+
+    }
 }

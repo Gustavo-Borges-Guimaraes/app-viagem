@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Passageiro;
 import project.app_viagem.model.Pessoa;
+import project.app_viagem.model.Viagem;
 import project.app_viagem.repository.PassageiroRepository;
+import project.app_viagem.repository.ViagemRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class PassageiroService {
 
     private PassageiroRepository passageiroRepository;
+    private ViagemRepository viagemRepository;
 
     public Passageiro criarPassageiro(Passageiro passageiro) {
         return passageiroRepository.save(passageiro);

@@ -24,7 +24,7 @@ public class Viagem {
 
     private String dataFim;
 
-    @OneToMany
+    @ManyToMany
     @JoinColumn(name = "passageiros_id")
     private List<Passageiro> passageiros = new ArrayList<>();
 }
