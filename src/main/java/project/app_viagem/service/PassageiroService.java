@@ -1,88 +1,74 @@
 package project.app_viagem.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Passageiro;
-import project.app_viagem.model.Pessoa;
-import project.app_viagem.model.Viagem;
 import project.app_viagem.repository.PassageiroRepository;
-import project.app_viagem.repository.ViagemRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class PassageiroService {
 
     private PassageiroRepository passageiroRepository;
-    private ViagemRepository viagemRepository;
+    private PessoaService pessoaService;
 
     public Passageiro criarPassageiro(Passageiro passageiro) {
         return passageiroRepository.save(passageiro);
     }
 
-    public Passageiro verPassageiro(Long passageiro_id) {
-        return passageiroRepository.findById(passageiro_id).get();
+    public ResponseEntity<Passageiro> verPassageiro(Long passageiro_id) {
+        return passageiroRepository.findById(passageiro_id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    public List<Passageiro> listarPassageiros() {
-        return passageiroRepository.findAll();
+    public ResponseEntity<List<Passageiro>> listarPassageiros() {
+        if (!passageiroRepository.findAll().isEmpty())
+            return ResponseEntity.ok(passageiroRepository.findAll());
+
+        return ResponseEntity.notFound().build();
     }
 
-    public Passageiro atualizarPassageiro(Passageiro passageiro_att, Long passageiro_id) {
-        Optional<Passageiro> optionalPassageiro = passageiroRepository.findById(passageiro_id);
+    public ResponseEntity<Passageiro> atualizarPassageiro(Passageiro passageiro_att, Long passageiro_id) {
+        if (passageiroRepository.existsById(passageiro_id)) {
+            Passageiro passageiro = passageiroRepository.findById(passageiro_id).get();
 
-        if (optionalPassageiro.isPresent()) {
-            Passageiro passageiro = optionalPassageiro.get();
+            passageiro.setPessoa(pessoaService.atualizaPessoa(passageiro.getPessoa(), passageiro_att.getPessoa()));
 
-            Pessoa pessoa = passageiro.getPessoa();
-            Pessoa pessoa_att = passageiro_att.getPessoa();
-
-            if (!pessoa_att.getNome().isEmpty())
-                pessoa.setNome(pessoa_att.getNome());
-
-            if (!pessoa_att.getCpf().isEmpty())
-                pessoa.setCpf(pessoa_att.getCpf());
-
-            if (!pessoa_att.getNumero().isEmpty())
-                pessoa.setNumero(pessoa_att.getNumero());
-
-            if (!pessoa_att.getEmail().isEmpty())
-                pessoa.setEmail(pessoa_att.getEmail());
-
-            passageiro.setPessoa(pessoa);
-
-            return passageiroRepository.save(passageiro);
+            return ResponseEntity.ok(passageiro);
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 
-    public Passageiro substituirPassageiro(Passageiro passageiro_att, Long passageiro_id) {
-        Optional<Passageiro> optionalPassageiro = passageiroRepository.findById(passageiro_id);
-
-        if (optionalPassageiro.isPresent()) {
-            Passageiro passageiro = optionalPassageiro.get();
-
-            passageiro_att.getPessoa().setId(passageiro.getPessoa().getId());
+    public ResponseEntity<Passageiro> substituirPassageiro(Passageiro passageiro_att, Long passageiro_id) {
+        if (passageiroRepository.existsById(passageiro_id)) {
             passageiro_att.setId(passageiro_id);
+            passageiroRepository.save(passageiro_att);
 
-            return passageiroRepository.save(passageiro_att);
+            return ResponseEntity.ok(passageiro_att);
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 
-    public String excluirPassageiro(Long passageiro_id) {
-        passageiroRepository.deleteById(passageiro_id);
+    public ResponseEntity<Void> excluirPassageiro(Long passageiro_id) {
+        if (passageiroRepository.existsById(passageiro_id)) {
+            passageiroRepository.deleteById(passageiro_id);
 
-        return "Passageiro de ID: " + passageiro_id + " excluido com sucesso!";
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    public String deletarPassageiros() {
+    public ResponseEntity<Void> deletarPassageiros() {
+        if (!passageiroRepository.findAll().isEmpty()) {
+            passageiroRepository.deleteAll();
 
-        passageiroRepository.deleteAll();
-
-        return "Todos passageiros deletados com sucesso!";
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
 }

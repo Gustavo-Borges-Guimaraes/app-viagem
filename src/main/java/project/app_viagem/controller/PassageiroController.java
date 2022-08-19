@@ -1,9 +1,10 @@
 package project.app_viagem.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.app_viagem.model.Passageiro;
-import project.app_viagem.model.Viagem;
 import project.app_viagem.service.PassageiroService;
 
 import java.util.List;
@@ -16,53 +17,39 @@ public class PassageiroController {
     private PassageiroService passageiroService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Passageiro criarPassageiro(@RequestBody Passageiro passageiro) {
         return passageiroService.criarPassageiro(passageiro);
     }
 
     @GetMapping("/{passageiro_id}")
-    public Passageiro verPassageiro(@PathVariable("passageiro_id") Long passageiro_id) {
+    public ResponseEntity<Passageiro> verPassageiro(@PathVariable("passageiro_id") Long passageiro_id) {
         return passageiroService.verPassageiro(passageiro_id);
     }
 
     @GetMapping
-    public List<Passageiro> listarPassageiros() {
+    public ResponseEntity<List<Passageiro>> listarPassageiros() {
         return passageiroService.listarPassageiros();
     }
 
     @PatchMapping("/{passageiro_id}")
-    public Passageiro atualizarPassageiro(@RequestBody Passageiro passageiro_att, @PathVariable("passageiro_id") Long passageiro_id) {
+    public ResponseEntity<Passageiro> atualizarPassageiro(@RequestBody Passageiro passageiro_att, @PathVariable("passageiro_id") Long passageiro_id) {
         return passageiroService.atualizarPassageiro(passageiro_att, passageiro_id);
     }
 
     @PutMapping("/{passageiro_id}")
-    public Passageiro substituirPassageiro(@RequestBody Passageiro passageiro_att, @PathVariable("passageiro_id") Long passageiro_id) {
+    public ResponseEntity<Passageiro> substituirPassageiro(@RequestBody Passageiro passageiro_att, @PathVariable("passageiro_id") Long passageiro_id) {
         return passageiroService.substituirPassageiro(passageiro_att, passageiro_id);
     }
 
     @DeleteMapping("/{passageiro_id}")
-    public String excluirPassageiro(@PathVariable("passageiro_id") Long passageiro_id) {
+    public ResponseEntity<Void> excluirPassageiro(@PathVariable("passageiro_id") Long passageiro_id) {
         return passageiroService.excluirPassageiro(passageiro_id);
     }
 
     @DeleteMapping
-    public String deletarPassageiros() {
+    public ResponseEntity<Void> deletarPassageiros() {
         return passageiroService.deletarPassageiros();
     }
-
-//    @PostMapping("adicionarViagem/{passageiro_id}/{viagem_id}")
-//    public List<Viagem> cadastrarViagem(@PathVariable("passageiro_id") Long passageiro_id, @PathVariable("viagem_id") Long viagem_id) {
-//        return passageiroService.cadastrarViagem(passageiro_id, viagem_id);
-//    }
-//
-//    @GetMapping("verViagem/{passageiro_id}/{viagem_id}")
-//    public Viagem verViagem(@PathVariable("passageiro_id") Long passageiro_id, @PathVariable("viagem_id") Long viagem_id) {
-//        return passageiroService.verViagem(passageiro_id, viagem_id);
-//    }
-//
-//    @DeleteMapping("removerViagem/{passageiro_id}/{viagem_id}")
-//    public String removerViagem(@PathVariable("passageiro_id") Long passageiro_id, @PathVariable("viagem_id") Long viagem_id) {
-//        return passageiroService.removerViagem(passageiro_id, viagem_id);
-//    }
 
 }
