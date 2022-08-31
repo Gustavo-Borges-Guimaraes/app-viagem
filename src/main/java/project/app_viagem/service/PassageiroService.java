@@ -1,12 +1,16 @@
 package project.app_viagem.service;
 
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Passageiro;
+import project.app_viagem.model.dto.PassageiroDTO;
 import project.app_viagem.repository.PassageiroRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -14,20 +18,29 @@ public class PassageiroService {
 
     private PassageiroRepository passageiroRepository;
     private PessoaService pessoaService;
+    private ModelMapper modelMapper;
 
     public Passageiro criarPassageiro(Passageiro passageiro) {
         return passageiroRepository.save(passageiro);
     }
 
-    public ResponseEntity<Passageiro> verPassageiro(Long passageiro_id) {
-        return passageiroRepository.findById(passageiro_id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PassageiroDTO> verPassageiro(Long passageiro_id) {
+
+        Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
+
+        PassageiroDTO passageiroDTO = modelMapper.map(passageiro.get(), PassageiroDTO.class);
+
+        return ResponseEntity.ok(passageiroDTO);
     }
 
-    public ResponseEntity<List<Passageiro>> listarPassageiros() {
+    public ResponseEntity<List<PassageiroDTO>> listarPassageiros() {
+
+        List<Passageiro> passageiro = passageiroRepository.findAll();
+
         if (!passageiroRepository.findAll().isEmpty())
-            return ResponseEntity.ok(passageiroRepository.findAll());
+            return ResponseEntity.ok(passageiro
+                    .stream().map(passageiroDTO -> modelMapper.map(passageiroDTO, PassageiroDTO.class))
+                    .collect(Collectors.toList()));
 
         return ResponseEntity.notFound().build();
     }
@@ -37,6 +50,8 @@ public class PassageiroService {
             Passageiro passageiro = passageiroRepository.findById(passageiro_id).get();
 
             passageiro.setPessoa(pessoaService.atualizaPessoa(passageiro.getPessoa(), passageiro_att.getPessoa()));
+
+            passageiroRepository.save(passageiro);
 
             return ResponseEntity.ok(passageiro);
         }

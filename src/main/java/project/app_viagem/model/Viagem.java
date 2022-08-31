@@ -24,7 +24,11 @@ public class Viagem {
 
     private String dataFim;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "passageiros_id")
     private List<Passageiro> passageiros = new ArrayList<>();
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "motorista_id")
+    private Motorista motorista;
 }

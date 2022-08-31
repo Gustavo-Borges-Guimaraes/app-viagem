@@ -1,12 +1,16 @@
 package project.app_viagem.service;
 
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Motorista;
+import project.app_viagem.model.dto.MotoristaDTO;
 import project.app_viagem.repository.MotoristaRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -14,20 +18,27 @@ public class MotoristaService {
 
     private MotoristaRepository motoristaRepository;
     private PessoaService pessoaService;
+    private ModelMapper modelMapper;
 
     public Motorista criarMotorista(Motorista motorista) {
         return motoristaRepository.save(motorista);
     }
 
-    public ResponseEntity<Motorista> verMotorista(Long motorista_id) {
-        return motoristaRepository.findById(motorista_id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<MotoristaDTO> verMotorista(Long motorista_id) {
+        Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
+
+        MotoristaDTO motoristaDTO = modelMapper.map(motorista.get(), MotoristaDTO.class);
+
+        return ResponseEntity.ok(motoristaDTO);
     }
 
-    public ResponseEntity<List<Motorista>> listarMotoristas() {
+    public ResponseEntity<List<MotoristaDTO>> listarMotoristas() {
+        List<Motorista> motorista = motoristaRepository.findAll();
+
         if (!motoristaRepository.findAll().isEmpty())
-            return ResponseEntity.ok(motoristaRepository.findAll());
+            return ResponseEntity.ok(motorista
+                    .stream().map(motoristaDTO -> modelMapper.map(motoristaDTO, MotoristaDTO.class))
+                    .collect(Collectors.toList()));
 
         return ResponseEntity.notFound().build();
     }

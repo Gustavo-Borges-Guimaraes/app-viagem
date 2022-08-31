@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.app_viagem.model.Passageiro;
+import project.app_viagem.model.dto.PassageiroDTO;
 import project.app_viagem.service.PassageiroService;
 
 import java.util.List;
@@ -23,12 +24,12 @@ public class PassageiroController {
     }
 
     @GetMapping("/{passageiro_id}")
-    public ResponseEntity<Passageiro> verPassageiro(@PathVariable("passageiro_id") Long passageiro_id) {
+    public ResponseEntity<PassageiroDTO> verPassageiro(@PathVariable("passageiro_id") Long passageiro_id) {
         return passageiroService.verPassageiro(passageiro_id);
     }
 
     @GetMapping
-    public ResponseEntity<List<Passageiro>> listarPassageiros() {
+    public ResponseEntity<List<PassageiroDTO>> listarPassageiros() {
         return passageiroService.listarPassageiros();
     }
 

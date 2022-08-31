@@ -6,7 +6,7 @@ import project.app_viagem.model.Pessoa;
 import java.util.List;
 
 @Data
-public class PassageiroDTO {
+public class MotoristaDTO {
 
     private Pessoa pessoa;
 
