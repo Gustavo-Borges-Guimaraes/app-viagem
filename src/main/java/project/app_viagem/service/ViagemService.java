@@ -1,12 +1,17 @@
 package project.app_viagem.service;
 
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import project.app_viagem.model.Passageiro;
 import project.app_viagem.model.Viagem;
+import project.app_viagem.model.dto.PassageiroDTO;
+import project.app_viagem.model.dto.ViagemDTO;
 import project.app_viagem.repository.ViagemRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -14,14 +19,18 @@ public class ViagemService {
 
     private ViagemRepository viagemRepository;
 
+    private ModelMapper modelMapper;
+
     public Viagem criarViagem(Viagem viagem) {
         return viagemRepository.save(viagem);
     }
 
-    public ResponseEntity<Viagem> verViagem(Long viagem_id) {
-        return viagemRepository.findById(viagem_id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ViagemDTO> verViagem(Long viagem_id) {
+        Optional<Viagem> passageiro = viagemRepository.findById(viagem_id);
+
+        ViagemDTO viagemDTO = modelMapper.map(passageiro.get(), ViagemDTO.class);
+
+        return ResponseEntity.ok(viagemDTO);
     }
 
     public ResponseEntity<List<Viagem>> listarViagems() {

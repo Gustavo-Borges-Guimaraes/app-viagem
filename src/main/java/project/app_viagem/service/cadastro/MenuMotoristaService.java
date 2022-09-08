@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import project.app_viagem.model.Motorista;
 import project.app_viagem.model.Viagem;
 import project.app_viagem.model.dto.MotoristaDTO;
-import project.app_viagem.model.dto.ViagemDTO;
+import project.app_viagem.model.dto.ViagemInfoDTO;
 import project.app_viagem.repository.MotoristaRepository;
 import project.app_viagem.repository.ViagemRepository;
 
@@ -35,7 +35,7 @@ public class MenuMotoristaService {
         return motorista.get().getViagens().get(viagem_id.intValue() - 1);
     }
 
-    public ResponseEntity<ViagemDTO> verViagemCadastrada(Long motorista_id, Long viagem_id) {
+    public ResponseEntity<ViagemInfoDTO> verViagemCadastrada(Long motorista_id, Long viagem_id) {
         Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
 
         MotoristaDTO motoristaDTO = modelMapper.map(motorista.get(), MotoristaDTO.class);
@@ -43,7 +43,7 @@ public class MenuMotoristaService {
         return ResponseEntity.ok(motoristaDTO.getViagens().get(viagem_id.intValue() - 1));
     }
 
-    public ResponseEntity<List<ViagemDTO>> listarViagensCadastradas(Long motorista_id) {
+    public ResponseEntity<List<ViagemInfoDTO>> listarViagensCadastradas(Long motorista_id) {
 
         Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
 

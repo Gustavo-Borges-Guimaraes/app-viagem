@@ -10,6 +10,8 @@ public class MotoristaDTO {
 
     private Pessoa pessoa;
 
-    private List<ViagemDTO> viagens;
+    private String credenciais;
+
+    private List<ViagemInfoDTO> viagens;
 
 }

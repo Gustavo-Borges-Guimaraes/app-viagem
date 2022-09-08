@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import project.app_viagem.model.Passageiro;
 import project.app_viagem.model.Viagem;
 import project.app_viagem.model.dto.PassageiroDTO;
-import project.app_viagem.model.dto.ViagemDTO;
+import project.app_viagem.model.dto.ViagemInfoDTO;
 import project.app_viagem.repository.PassageiroRepository;
 import project.app_viagem.repository.ViagemRepository;
 
@@ -20,7 +20,6 @@ public class MenuPassageiroService {
 
     private PassageiroRepository passageiroRepository;
     private ViagemRepository viagemRepository;
-
     private ModelMapper modelMapper;
 
     public Viagem cadastrarViagem(Long passageiro_id, Long viagem_id) {
@@ -35,7 +34,7 @@ public class MenuPassageiroService {
         return passageiro.get().getViagens().get(viagem_id.intValue() - 1);
     }
 
-    public ResponseEntity<ViagemDTO> verViagemCadastrada(Long passageiro_id, Long viagem_id) {
+    public ResponseEntity<ViagemInfoDTO> verViagemCadastrada(Long passageiro_id, Long viagem_id) {
         Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
 
         PassageiroDTO passageiroDTO = modelMapper.map(passageiro.get(), PassageiroDTO.class);
@@ -43,7 +42,7 @@ public class MenuPassageiroService {
         return ResponseEntity.ok(passageiroDTO.getViagens().get(viagem_id.intValue() - 1));
     }
 
-    public ResponseEntity<List<ViagemDTO>> listarViagensCadastradas(Long passageiro_id) {
+    public ResponseEntity<List<ViagemInfoDTO>> listarViagensCadastradas(Long passageiro_id) {
 
         Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
 
