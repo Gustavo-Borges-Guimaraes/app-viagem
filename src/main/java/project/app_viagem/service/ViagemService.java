@@ -2,16 +2,13 @@ package project.app_viagem.service;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import project.app_viagem.model.Passageiro;
 import project.app_viagem.model.Viagem;
-import project.app_viagem.model.dto.PassageiroDTO;
 import project.app_viagem.model.dto.ViagemDTO;
 import project.app_viagem.repository.ViagemRepository;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,23 +22,24 @@ public class ViagemService {
         return viagemRepository.save(viagem);
     }
 
-    public ResponseEntity<ViagemDTO> verViagem(Long viagem_id) {
-        Optional<Viagem> passageiro = viagemRepository.findById(viagem_id);
+    public ViagemDTO verViagem(Long viagem_id) {
+        if (viagemRepository.findById(viagem_id).isPresent())
+            return modelMapper.map(viagemRepository.findById(viagem_id).get(), ViagemDTO.class);
 
-        ViagemDTO viagemDTO = modelMapper.map(passageiro.get(), ViagemDTO.class);
-
-        return ResponseEntity.ok(viagemDTO);
+        return null;
     }
 
-    public ResponseEntity<List<Viagem>> listarViagems() {
+    public List<ViagemDTO> listarViagems() {
         if (!viagemRepository.findAll().isEmpty())
-            return ResponseEntity.ok(viagemRepository.findAll());
+            return viagemRepository.findAll().stream()
+                    .map(viagemDTO -> modelMapper.map(viagemDTO, ViagemDTO.class))
+                    .collect(Collectors.toList());
 
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
-    public ResponseEntity<Viagem> atualizarViagem(Viagem viagem_att, Long viagem_id) {
-        if (viagemRepository.existsById(viagem_id)) {
+    public Viagem atualizarViagem(Viagem viagem_att, Long viagem_id) {
+        if (viagemRepository.findById(viagem_id).isPresent()) {
             Viagem viagem = viagemRepository.findById(viagem_id).get();
 
             if (!viagem_att.getDistancia().isEmpty())
@@ -64,37 +62,37 @@ public class ViagemService {
 
             viagemRepository.save(viagem);
 
-            return ResponseEntity.ok(viagem);
+            return viagem;
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
-    public ResponseEntity<Viagem> substituirViagem(Viagem viagem_att, Long viagem_id) {
+    public Viagem substituirViagem(Viagem viagem_att, Long viagem_id) {
         if (viagemRepository.existsById(viagem_id)) {
             viagem_att.setId(viagem_id);
             viagemRepository.save(viagem_att);
 
-            return ResponseEntity.ok(viagem_att);
+            return viagem_att;
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
-    public ResponseEntity<Void> excluirViagem(Long viagem_id) {
+    public boolean excluirViagem(Long viagem_id) {
         if (viagemRepository.existsById(viagem_id)) {
             viagemRepository.deleteById(viagem_id);
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
-    public ResponseEntity<Void> deletarViagems() {
+    public boolean deletarViagems() {
         if (!viagemRepository.findAll().isEmpty()) {
             viagemRepository.deleteAll();
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
 }

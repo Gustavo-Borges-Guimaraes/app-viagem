@@ -1,9 +1,11 @@
 package project.app_viagem.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Pessoa;
 
 @Service
+@AllArgsConstructor
 public class PessoaService {
 
     public Pessoa atualizaPessoa(Pessoa pessoa, Pessoa pessoa_att) {

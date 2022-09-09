@@ -25,32 +25,48 @@ public class MotoristaController {
 
     @GetMapping("/{motorista_id}")
     public ResponseEntity<MotoristaDTO> verMotorista(@PathVariable("motorista_id") Long motorista_id) {
-        return motoristaService.verMotorista(motorista_id);
+        return ResponseEntity.ok(motoristaService.verMotorista(motorista_id));
     }
 
     @GetMapping
     public ResponseEntity<List<MotoristaDTO>> listarMotoristas() {
-        return motoristaService.listarMotoristas();
+        return ResponseEntity.ok(motoristaService.listarMotoristas());
     }
 
     @PatchMapping("/{motorista_id}")
     public ResponseEntity<Motorista> atualizarMotorista(@RequestBody Motorista motorista_att, @PathVariable("motorista_id") Long motorista_id) {
-        return motoristaService.atualizarMotorista(motorista_att, motorista_id);
+        Motorista motorista = motoristaService.atualizarMotorista(motorista_att, motorista_id);
+
+        if (motorista == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(motorista);
     }
 
     @PutMapping("/{motorista_id}")
     public ResponseEntity<Motorista> substituirMotorista(@RequestBody Motorista motorista_att, @PathVariable("motorista_id") Long motorista_id) {
-        return motoristaService.substituirMotorista(motorista_att, motorista_id);
+        Motorista motorista = motoristaService.substituirMotorista(motorista_att, motorista_id);
+
+        if (motorista == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(motorista);
     }
 
     @DeleteMapping("/{motorista_id}")
     public ResponseEntity<Void> excluirMotorista(@PathVariable("motorista_id") Long motorista_id) {
-        return motoristaService.excluirMotorista(motorista_id);
+        if (motoristaService.excluirMotorista(motorista_id))
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deletarMotoristas() {
-        return motoristaService.deletarMotoristas();
+        if (motoristaService.deletarMotoristas())
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.notFound().build();
     }
 
 }

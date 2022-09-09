@@ -2,7 +2,6 @@ package project.app_viagem.service.cadastro;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Passageiro;
 import project.app_viagem.model.Viagem;
@@ -29,50 +28,59 @@ public class MenuPassageiroService {
         if (passageiro.isPresent() && viagem.isPresent()) {
             passageiro.get().getViagens().add(viagem.get());
             passageiroRepository.save(passageiro.get());
+
+            return passageiro.get().getViagens().get(viagem_id.intValue() - 1);
         }
 
-        return passageiro.get().getViagens().get(viagem_id.intValue() - 1);
+        return null;
     }
 
-    public ResponseEntity<ViagemInfoDTO> verViagemCadastrada(Long passageiro_id, Long viagem_id) {
+    public ViagemInfoDTO verViagemCadastrada(Long passageiro_id, Long viagem_id) {
         Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
 
-        PassageiroDTO passageiroDTO = modelMapper.map(passageiro.get(), PassageiroDTO.class);
-
-        return ResponseEntity.ok(passageiroDTO.getViagens().get(viagem_id.intValue() - 1));
-    }
-
-    public ResponseEntity<List<ViagemInfoDTO>> listarViagensCadastradas(Long passageiro_id) {
-
-        Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
-
-        PassageiroDTO passageiroDTO = modelMapper.map(passageiro.get(), PassageiroDTO.class);
-
-        return ResponseEntity.ok(passageiroDTO.getViagens());
-    }
-
-    public ResponseEntity<Void> removerViagemCadastrada(Long passageiro_id, Long viagem_id) {
-        Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
-
-        if (passageiro.isPresent() && passageiro.get().getViagens().contains(viagemRepository.findById(viagem_id).get())) {
-            passageiro.get().getViagens().remove(viagem_id.intValue() - 1);
-            passageiroRepository.save(passageiro.get());
-
-            return ResponseEntity.noContent().build();
+        if (passageiro.isPresent()) {
+            PassageiroDTO passageiroDTO = modelMapper.map(passageiro.get(), PassageiroDTO.class);
+            if (passageiroDTO.getViagens().get(viagem_id.intValue() - 1) != null)
+                return passageiroDTO.getViagens().get(viagem_id.intValue() - 1);
         }
-        return ResponseEntity.notFound().build();
+
+        return null;
     }
 
-    public ResponseEntity<Void> deletarViagensCadastradas(Long passageiro_id) {
+    public List<ViagemInfoDTO> listarViagensCadastradas(Long passageiro_id) {
+        Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
+
+        if (passageiro.isPresent()) {
+            PassageiroDTO passageiroDTO = modelMapper.map(passageiro.get(), PassageiroDTO.class);
+            return passageiroDTO.getViagens();
+        }
+        return null;
+    }
+
+    public boolean removerViagemCadastrada(Long passageiro_id, Long viagem_id) {
+        Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
+        Optional<Viagem> viagem = viagemRepository.findById(viagem_id);
+
+        if (passageiro.isPresent() && viagem.isPresent())
+            if (passageiro.get().getViagens().contains(viagem.get())) {
+                passageiro.get().getViagens().remove(viagem_id.intValue() - 1);
+                passageiroRepository.save(passageiro.get());
+
+                return true;
+            }
+        return false;
+    }
+
+    public boolean deletarViagensCadastradas(Long passageiro_id) {
         Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
 
         if (passageiro.isPresent() && !passageiro.get().getViagens().isEmpty()) {
             passageiro.get().getViagens().clear();
             passageiroRepository.save(passageiro.get());
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
 }

@@ -25,22 +25,28 @@ public class MenuMotoristaController {
 
     @GetMapping("/{viagem_id}")
     public ResponseEntity<ViagemInfoDTO> verViagemCadastrada(@PathVariable("motorista_id") Long motorista_id, @PathVariable("viagem_id") Long viagem_id) {
-        return menuMotoristaService.verViagemCadastrada(motorista_id, viagem_id);
+        return ResponseEntity.ok(menuMotoristaService.verViagemCadastrada(motorista_id, viagem_id));
     }
 
     @GetMapping
     public ResponseEntity<List<ViagemInfoDTO>> listarViagensCadastradas(@PathVariable("motorista_id") Long motorista_id) {
-        return menuMotoristaService.listarViagensCadastradas(motorista_id);
+        return ResponseEntity.ok(menuMotoristaService.listarViagensCadastradas(motorista_id));
     }
 
     @DeleteMapping("/{viagem_id}")
     public ResponseEntity<Void> removerViagemCadastrada(@PathVariable("motorista_id") Long motorista_id, @PathVariable("viagem_id") Long viagem_id) {
-        return menuMotoristaService.removerViagemCadastrada(motorista_id, viagem_id);
+        if (menuMotoristaService.removerViagemCadastrada(motorista_id, viagem_id))
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deletarViagensCadastradas(@PathVariable("motorista_id") Long motorista_id) {
-        return menuMotoristaService.deletarViagensCadastradas(motorista_id);
+        if (menuMotoristaService.deletarViagensCadastradas(motorista_id))
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.notFound().build();
     }
 
 }

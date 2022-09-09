@@ -2,7 +2,6 @@ package project.app_viagem.service;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Passageiro;
 import project.app_viagem.model.dto.PassageiroDTO;
@@ -24,66 +23,61 @@ public class PassageiroService {
         return passageiroRepository.save(passageiro);
     }
 
-    public ResponseEntity<PassageiroDTO> verPassageiro(Long passageiro_id) {
+    public PassageiroDTO verPassageiro(Long passageiro_id) {
+        if (passageiroRepository.findById(passageiro_id).isPresent())
+            return modelMapper.map(passageiroRepository.findById(passageiro_id).get(), PassageiroDTO.class);
 
+        return null;
+    }
+
+    public List<PassageiroDTO> listarPassageiros() {
+        if (!passageiroRepository.findAll().isEmpty())
+            return passageiroRepository.findAll().stream()
+                    .map(passageiroDTO -> modelMapper.map(passageiroDTO, PassageiroDTO.class))
+                    .collect(Collectors.toList());
+
+        return null;
+    }
+
+    public Passageiro atualizarPassageiro(Passageiro passageiro_att, Long passageiro_id) {
         Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
 
-        PassageiroDTO passageiroDTO = modelMapper.map(passageiro.get(), PassageiroDTO.class);
+        if (passageiro.isPresent()) {
+            passageiro.get().setPessoa(pessoaService.atualizaPessoa(passageiro.get().getPessoa(), passageiro_att.getPessoa()));
 
-        return ResponseEntity.ok(passageiroDTO);
-    }
+            passageiroRepository.save(passageiro.get());
 
-    public ResponseEntity<List<PassageiroDTO>> listarPassageiros() {
-
-        List<Passageiro> passageiro = passageiroRepository.findAll();
-
-        if (!passageiroRepository.findAll().isEmpty())
-            return ResponseEntity.ok(passageiro
-                    .stream().map(passageiroDTO -> modelMapper.map(passageiroDTO, PassageiroDTO.class))
-                    .collect(Collectors.toList()));
-
-        return ResponseEntity.notFound().build();
-    }
-
-    public ResponseEntity<Passageiro> atualizarPassageiro(Passageiro passageiro_att, Long passageiro_id) {
-        if (passageiroRepository.existsById(passageiro_id)) {
-            Passageiro passageiro = passageiroRepository.findById(passageiro_id).get();
-
-            passageiro.setPessoa(pessoaService.atualizaPessoa(passageiro.getPessoa(), passageiro_att.getPessoa()));
-
-            passageiroRepository.save(passageiro);
-
-            return ResponseEntity.ok(passageiro);
+            return passageiro.get();
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
-    public ResponseEntity<Passageiro> substituirPassageiro(Passageiro passageiro_att, Long passageiro_id) {
+    public Passageiro substituirPassageiro(Passageiro passageiro_att, Long passageiro_id) {
         if (passageiroRepository.existsById(passageiro_id)) {
             passageiro_att.setId(passageiro_id);
             passageiroRepository.save(passageiro_att);
 
-            return ResponseEntity.ok(passageiro_att);
+            return passageiro_att;
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
-    public ResponseEntity<Void> excluirPassageiro(Long passageiro_id) {
+    public boolean excluirPassageiro(Long passageiro_id) {
         if (passageiroRepository.existsById(passageiro_id)) {
             passageiroRepository.deleteById(passageiro_id);
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
-    public ResponseEntity<Void> deletarPassageiros() {
+    public boolean deletarPassageiros() {
         if (!passageiroRepository.findAll().isEmpty()) {
             passageiroRepository.deleteAll();
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
 }

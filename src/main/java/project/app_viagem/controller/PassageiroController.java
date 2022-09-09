@@ -25,32 +25,48 @@ public class PassageiroController {
 
     @GetMapping("/{passageiro_id}")
     public ResponseEntity<PassageiroDTO> verPassageiro(@PathVariable("passageiro_id") Long passageiro_id) {
-        return passageiroService.verPassageiro(passageiro_id);
+        return ResponseEntity.ok(passageiroService.verPassageiro(passageiro_id));
     }
 
     @GetMapping
     public ResponseEntity<List<PassageiroDTO>> listarPassageiros() {
-        return passageiroService.listarPassageiros();
+        return ResponseEntity.ok(passageiroService.listarPassageiros());
     }
 
     @PatchMapping("/{passageiro_id}")
     public ResponseEntity<Passageiro> atualizarPassageiro(@RequestBody Passageiro passageiro_att, @PathVariable("passageiro_id") Long passageiro_id) {
-        return passageiroService.atualizarPassageiro(passageiro_att, passageiro_id);
+        Passageiro passageiro = passageiroService.atualizarPassageiro(passageiro_att, passageiro_id);
+
+        if (passageiro == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(passageiro);
     }
 
     @PutMapping("/{passageiro_id}")
     public ResponseEntity<Passageiro> substituirPassageiro(@RequestBody Passageiro passageiro_att, @PathVariable("passageiro_id") Long passageiro_id) {
-        return passageiroService.substituirPassageiro(passageiro_att, passageiro_id);
+        Passageiro passageiro = passageiroService.substituirPassageiro(passageiro_att, passageiro_id);
+
+        if (passageiro == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(passageiro);
     }
 
     @DeleteMapping("/{passageiro_id}")
     public ResponseEntity<Void> excluirPassageiro(@PathVariable("passageiro_id") Long passageiro_id) {
-        return passageiroService.excluirPassageiro(passageiro_id);
+        if (passageiroService.excluirPassageiro(passageiro_id))
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deletarPassageiros() {
-        return passageiroService.deletarPassageiros();
+        if (passageiroService.deletarPassageiros())
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.notFound().build();
     }
 
 }

@@ -2,7 +2,6 @@ package project.app_viagem.service;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import project.app_viagem.model.Motorista;
 import project.app_viagem.model.dto.MotoristaDTO;
@@ -24,68 +23,63 @@ public class MotoristaService {
         return motoristaRepository.save(motorista);
     }
 
-    public ResponseEntity<MotoristaDTO> verMotorista(Long motorista_id) {
+    public MotoristaDTO verMotorista(Long motorista_id) {
+        if (motoristaRepository.findById(motorista_id).isPresent())
+            return modelMapper.map(motoristaRepository.findById(motorista_id).get(), MotoristaDTO.class);
+
+        return null;
+    }
+
+    public List<MotoristaDTO> listarMotoristas() {
+        if (!motoristaRepository.findAll().isEmpty())
+            return motoristaRepository.findAll().stream()
+                    .map(motoristaDTO -> modelMapper.map(motoristaDTO, MotoristaDTO.class))
+                    .collect(Collectors.toList());
+
+        return null;
+    }
+
+    public Motorista atualizarMotorista(Motorista motorista_att, Long motorista_id) {
         Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
 
-        MotoristaDTO motoristaDTO = modelMapper.map(motorista.get(), MotoristaDTO.class);
-
-        return ResponseEntity.ok(motoristaDTO);
-    }
-
-    public ResponseEntity<List<MotoristaDTO>> listarMotoristas() {
-        List<Motorista> motorista = motoristaRepository.findAll();
-
-        if (!motoristaRepository.findAll().isEmpty())
-            return ResponseEntity.ok(motorista
-                    .stream().map(motoristaDTO -> modelMapper.map(motoristaDTO, MotoristaDTO.class))
-                    .collect(Collectors.toList()));
-
-        return ResponseEntity.notFound().build();
-    }
-
-    public ResponseEntity<Motorista> atualizarMotorista(Motorista motorista_att, Long motorista_id) {
-
-        if (motoristaRepository.existsById(motorista_id)) {
-            Motorista motorista = motoristaRepository.findById(motorista_id).get();
-
+        if (motorista.isPresent()) {
             if (!motorista_att.getCredenciais().isEmpty())
-                motorista.setCredenciais(motorista_att.getCredenciais());
+                motorista.get().setCredenciais(motorista_att.getCredenciais());
 
-            motorista.setPessoa(pessoaService.atualizaPessoa(motorista.getPessoa(), motorista_att.getPessoa()));
-            motoristaRepository.save(motorista);
+            motorista.get().setPessoa(pessoaService.atualizaPessoa(motorista.get().getPessoa(), motorista_att.getPessoa()));
+            motoristaRepository.save(motorista.get());
 
-            return ResponseEntity.ok(motorista);
+            return motorista.get();
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
-    public ResponseEntity<Motorista> substituirMotorista(Motorista motorista_att, Long motorista_id) {
-
+    public Motorista substituirMotorista(Motorista motorista_att, Long motorista_id) {
         if (motoristaRepository.existsById(motorista_id)) {
             motorista_att.setId(motorista_id);
             motoristaRepository.save(motorista_att);
 
-            return ResponseEntity.ok(motorista_att);
+            return motorista_att;
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
-    public ResponseEntity<Void> excluirMotorista(Long motorista_id) {
+    public boolean excluirMotorista(Long motorista_id) {
         if (motoristaRepository.existsById(motorista_id)) {
             motoristaRepository.deleteById(motorista_id);
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
-    public ResponseEntity<Void> deletarMotoristas() {
+    public boolean deletarMotoristas() {
         if (!motoristaRepository.findAll().isEmpty()) {
             motoristaRepository.deleteAll();
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
 }

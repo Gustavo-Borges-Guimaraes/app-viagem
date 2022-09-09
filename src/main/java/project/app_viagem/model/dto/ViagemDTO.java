@@ -1,8 +1,6 @@
 package project.app_viagem.model.dto;
 
 import lombok.Data;
-import project.app_viagem.model.Motorista;
-import project.app_viagem.model.Passageiro;
 
 import java.util.ArrayList;
 import java.util.List;

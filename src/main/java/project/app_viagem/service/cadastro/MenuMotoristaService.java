@@ -2,7 +2,6 @@ package project.app_viagem.service.cadastro;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import project.app_viagem.model.Motorista;
@@ -30,50 +29,55 @@ public class MenuMotoristaService {
         if (motorista.isPresent() && viagem.isPresent()) {
             motorista.get().getViagens().add(viagem.get());
             motoristaRepository.save(motorista.get());
+
+            return motorista.get().getViagens().get(viagem_id.intValue() - 1);
         }
-
-        return motorista.get().getViagens().get(viagem_id.intValue() - 1);
+        return null;
     }
 
-    public ResponseEntity<ViagemInfoDTO> verViagemCadastrada(Long motorista_id, Long viagem_id) {
+    public ViagemInfoDTO verViagemCadastrada(Long motorista_id, Long viagem_id) {
         Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
 
-        MotoristaDTO motoristaDTO = modelMapper.map(motorista.get(), MotoristaDTO.class);
-
-        return ResponseEntity.ok(motoristaDTO.getViagens().get(viagem_id.intValue() - 1));
+        if (motorista.isPresent()) {
+            MotoristaDTO motoristaDTO = modelMapper.map(motorista.get(), MotoristaDTO.class);
+            if (motoristaDTO.getViagens().get(viagem_id.intValue() - 1) != null)
+                return motoristaDTO.getViagens().get(viagem_id.intValue() - 1);
+        }
+        return null;
     }
 
-    public ResponseEntity<List<ViagemInfoDTO>> listarViagensCadastradas(Long motorista_id) {
-
+    public List<ViagemInfoDTO> listarViagensCadastradas(Long motorista_id) {
         Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
 
-        MotoristaDTO motoristaDTO = modelMapper.map(motorista.get(), MotoristaDTO.class);
-
-        return ResponseEntity.ok(motoristaDTO.getViagens());
+        if (motorista.isPresent()) {
+            MotoristaDTO motoristaDTO = modelMapper.map(motorista.get(), MotoristaDTO.class);
+            return motoristaDTO.getViagens();
+        }
+        return null;
     }
 
-    public ResponseEntity<Void> removerViagemCadastrada(Long motorista_id, Long viagem_id) {
+    public boolean removerViagemCadastrada(Long motorista_id, Long viagem_id) {
         Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
 
         if (motorista.isPresent() && motorista.get().getViagens().contains(viagemRepository.findById(viagem_id).get())) {
             motorista.get().getViagens().remove(viagem_id.intValue() - 1);
             motoristaRepository.save(motorista.get());
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
-    public ResponseEntity<Void> deletarViagensCadastradas(Long motorista_id) {
+    public boolean deletarViagensCadastradas(Long motorista_id) {
         Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
 
         if (motorista.isPresent() && !motorista.get().getViagens().isEmpty()) {
             motorista.get().getViagens().clear();
             motoristaRepository.save(motorista.get());
 
-            return ResponseEntity.noContent().build();
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
 
