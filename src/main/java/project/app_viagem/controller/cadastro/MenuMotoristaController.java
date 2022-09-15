@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.app_viagem.model.Viagem;
 import project.app_viagem.model.dto.ViagemInfoDTO;
+import project.app_viagem.repository.MotoristaRepository;
+import project.app_viagem.repository.ViagemRepository;
 import project.app_viagem.service.cadastro.MenuMotoristaService;
 
 import java.util.List;
@@ -15,11 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 public class MenuMotoristaController {
 
+    private MotoristaRepository motoristaRepository;
+    private ViagemRepository viagemRepository;
     public MenuMotoristaService menuMotoristaService;
 
     @PostMapping("/{viagem_id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Viagem cadastrarMotorista(@PathVariable("motorista_id") Long motorista_id, @PathVariable("viagem_id") Long viagem_id) {
+    public ViagemInfoDTO cadastrarMotorista(@PathVariable("motorista_id") Long motorista_id, @PathVariable("viagem_id") Long viagem_id) {
         return menuMotoristaService.cadastrarViagem(motorista_id, viagem_id);
     }
 

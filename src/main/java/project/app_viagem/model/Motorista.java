@@ -13,14 +13,14 @@ public class Motorista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "pessoa_id")
     private Pessoa pessoa;
 
     private String credenciais;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "viagem_id")
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "motorista_id")
     private List<Viagem> viagens;
 
 }

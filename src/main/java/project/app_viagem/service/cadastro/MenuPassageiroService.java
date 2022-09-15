@@ -21,17 +21,18 @@ public class MenuPassageiroService {
     private ViagemRepository viagemRepository;
     private ModelMapper modelMapper;
 
-    public Viagem cadastrarViagem(Long passageiro_id, Long viagem_id) {
+    public ViagemInfoDTO cadastrarViagem(Long passageiro_id, Long viagem_id) {
         Optional<Passageiro> passageiro = passageiroRepository.findById(passageiro_id);
         Optional<Viagem> viagem = viagemRepository.findById(viagem_id);
 
         if (passageiro.isPresent() && viagem.isPresent()) {
-            passageiro.get().getViagens().add(viagem.get());
-            passageiroRepository.save(passageiro.get());
+//            passageiro.get().getViagens().add(viagem.get());
+//            passageiroRepository.save(passageiro.get());
+            viagem.get().getPassageiros().add(passageiro.get());
+            viagemRepository.save(viagem.get());
 
-            return passageiro.get().getViagens().get(viagem_id.intValue() - 1);
+            return modelMapper.map(viagem.get(), ViagemInfoDTO.class);
         }
-
         return null;
     }
 
@@ -43,7 +44,6 @@ public class MenuPassageiroService {
             if (passageiroDTO.getViagens().get(viagem_id.intValue() - 1) != null)
                 return passageiroDTO.getViagens().get(viagem_id.intValue() - 1);
         }
-
         return null;
     }
 

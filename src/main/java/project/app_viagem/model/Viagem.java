@@ -24,11 +24,15 @@ public class Viagem {
 
     private String dataFim;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "passageiros_id")
-    private List<Passageiro> passageiros = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "passageiro_viagem",
+            joinColumns = @JoinColumn(name = "viagem_id"),
+            inverseJoinColumns = @JoinColumn(name = "passageiro_id")
+    )
+    private List<Passageiro> passageiros;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "motorista_id")
     private Motorista motorista;
 }

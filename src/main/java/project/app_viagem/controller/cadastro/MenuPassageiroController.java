@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.app_viagem.model.Viagem;
 import project.app_viagem.model.dto.ViagemInfoDTO;
 import project.app_viagem.service.cadastro.MenuPassageiroService;
 
@@ -19,7 +18,7 @@ public class MenuPassageiroController {
 
     @PostMapping("/{viagem_id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Viagem cadastrarViagem(@PathVariable("passageiro_id") Long passageiro_id, @PathVariable("viagem_id") Long viagem_id) {
+    public ViagemInfoDTO cadastrarViagem(@PathVariable("passageiro_id") Long passageiro_id, @PathVariable("viagem_id") Long viagem_id) {
         return menuPassageiroService.cadastrarViagem(passageiro_id, viagem_id);
     }
 

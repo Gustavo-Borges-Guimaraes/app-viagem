@@ -3,7 +3,6 @@ package project.app_viagem.service.cadastro;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import project.app_viagem.model.Motorista;
 import project.app_viagem.model.Viagem;
 import project.app_viagem.model.dto.MotoristaDTO;
@@ -22,15 +21,17 @@ public class MenuMotoristaService {
     private ViagemRepository viagemRepository;
     private ModelMapper modelMapper;
 
-    public Viagem cadastrarViagem(@PathVariable("motorista_id") Long motorista_id, @PathVariable("viagem_id") Long viagem_id) {
+    public ViagemInfoDTO cadastrarViagem(Long motorista_id, Long viagem_id) {
         Optional<Motorista> motorista = motoristaRepository.findById(motorista_id);
         Optional<Viagem> viagem = viagemRepository.findById(viagem_id);
 
         if (motorista.isPresent() && viagem.isPresent()) {
-            motorista.get().getViagens().add(viagem.get());
-            motoristaRepository.save(motorista.get());
+//            motorista.get().getViagens().add(viagem.get());
+//            motoristaRepository.save(motorista.get());
+            viagem.get().setMotorista(motorista.get());
+            viagemRepository.save(viagem.get());
 
-            return motorista.get().getViagens().get(viagem_id.intValue() - 1);
+            return modelMapper.map(viagem.get(), ViagemInfoDTO.class);
         }
         return null;
     }
